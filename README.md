@@ -6,7 +6,6 @@ I shall exploit github servers so filegarden doesn't have to suffer
 ```bash
 python -m pip install PyGithub requests
 ```
-3. Make a repo called "images"
 4. Download the .py
 5. Edit the .py with ur username, you also need to create a **PAT** that has write access to your images repo (look at the python if u dont know how)
 6. Change the variables in the .py to match your settings
