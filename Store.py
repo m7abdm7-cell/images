@@ -17,7 +17,7 @@ if not token:
     print("\nHOW TO FIX:")
     print("1. Generate a PAT: Go to GitHub Settings > Developer settings > Personal access tokens > Tokens (classic).")
     print("2. Create one with 'repo' scope permissions. (make sure it has write access on your image repo!)")
-    print("3. Run this in PowerShell (replace YOUR_TOKEN):")
+    print("3. Run this in !PowerShell! (replace YOUR_TOKEN):")
     print("   [System.Environment]::SetEnvironmentVariable('GITHUB_PAT', 'YOUR_TOKEN', 'User')")
     print("\nAfter running the command, CLOSE AND REOPEN your terminal.")
     print("Don't be stupid and think this will hack your github, environment variables are stored ON YOUR PC.\nAnd this python only sends them to github so it can authenticate!")
