@@ -82,7 +82,7 @@ while True:
         
         print(f"Successfully uploaded: {file_name}")
         
-        # Using your ?raw=true
+        # Using ?raw=true
         blob_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}/blob/{BRANCH}/assets/{file_name}"
         raw_url = f"{blob_url}?raw=true"
         
