@@ -3,10 +3,11 @@ import base64
 from github import Github
 from github import Auth
 
-# --- CONFIGURATION ---
+# --- ONLY CHANGE THESE! ---
 GITHUB_USER = "pawPatoes" # Your github username
 REPO_NAME = "images" # The repo that u want to house all ur images
 BRANCH = "main" # You can keep this as main unless u make a new branch
+# --- END OF YOUR CHANGES! ---
 
 # 1. Setup authentication
 token = os.getenv('GITHUB_PAT')
