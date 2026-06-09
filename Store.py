@@ -41,7 +41,7 @@ print("Commands: 'cd [folder]' to change directory, or type filename to upload."
 
 # 2. Main Loop
 while True:
-    user_input = input("\n> ").strip()
+    user_input = input(f"\n{current_dir}>").strip().replace("\"", "")
 
     if not user_input:
         continue
