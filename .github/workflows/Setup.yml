@@ -2,6 +2,7 @@ name: Setup Forked Repo
 
 on:
   fork:
+  workflow_dispatch:
 
 jobs:
   setup:
