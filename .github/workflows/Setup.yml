@@ -24,22 +24,21 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # 1. Handle Assets Cleanup
-          if [ -d "assets" ]; then
-            rm -rf assets/*
-            touch assets/.gitkeep
-          fi
-          
-          # 2. Update Store.py
           sed -i "8s|GITHUB_USER = \".*\"|GITHUB_USER = \"$FORK_USER\"|" Store.py
           sed -i "9s|REPO_NAME = \".*\"|REPO_NAME = \"$FORK_REPO\"|" Store.py
           sed -i "10s|BRANCH = \".*\"|BRANCH = \"$FORK_BRANCH\"|" Store.py
           
-          # 3. Check for changes and push
-          # 'git diff --exit-code' returns 1 if there are changes
+          if [ -d "assets" ]; then
+            # Check if assets folder is not already empty/just .gitkeep
+            if [ "$(ls -A assets/ | grep -v '^\.gitkeep$')" ]; then
+              rm -rf assets/*
+              touch assets/.gitkeep
+            fi
+          fi
+          
           if ! git diff --quiet; then
             git add .
-            git commit -m "Automated setup: clear assets and update config for fork"
+            git commit -m "Automated setup: refresh config and clean assets"
             git push
           else
             echo "No changes detected, skipping commit."
