@@ -4,14 +4,6 @@ import os
 import time
 import threading
 import requests
-# --- START OF YOUR CHANGES ---
-GITHUB_USER = "pawPatoes" # Your github username
-REPO_NAME = "images" # The repo name, if you forked this repo without changing the name don't change this
-BRANCH = "main" # Unless you made a new branch don't change this!
-# IGNORE THESE IF THE CREDENTIALS ARE CORRECT!
-# --- END OF YOUR CHANGES
-
-
 
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
 def install_and_import(package, import_name=None):
@@ -31,6 +23,10 @@ except: readline = install_and_import("readline")
 Github = install_and_import("PyGithub", "github").Github
 Auth = install_and_import("PyGithub", "github.Auth").Auth
 
+# --- CONFIGURATION ---
+GITHUB_USER = "pawPatoes"
+REPO_NAME = "images"
+BRANCH = "main"
 
 loading = False
 loading_msg = "loading"
@@ -164,6 +160,9 @@ while True:
 
     # DELETE
     if user_input.lower().startswith('delete '):
+        if user_input.lower() == "delete .gitkeep":
+            print(".gitkeep cannot be deleted!")
+            continue
         target_input = user_input.split(' ', 1)[1].strip()
         target_file = next((f for f in remote_cache if f.lower() == target_input.lower()), None)
         if not target_file: print("File not found in cache."); continue
@@ -196,6 +195,6 @@ while True:
                     repo.update_file(contents.path, "Update", data, contents.sha)
                 except: repo.create_file(f"assets/{file_name}", "Add", data)
                 loading = False; t.join()
-                blob_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}/blob/{BRANCH}/assets/{file_name}"
+                blob_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}/blob/{BRANCH}/assets/{file_name}".replace(" ", "%20")
                 print(f"\nUploaded: {file_name}\nView on github: {blob_url}\nDirect Link: {blob_url}?raw=true")
             except Exception as e: loading = False; t.join(); print(f"\nError: {e}")
