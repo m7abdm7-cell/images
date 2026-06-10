@@ -177,7 +177,6 @@ while True:
         except Exception as e: print(f"\nError: {e}")
         finally: loading = False; t.join()
         continue
-
     if user_input.lower().startswith("bsod"):
         bro_cooked = input("ARE YOU ABSOLUTELY SURE YOU WANT TO BLUE SCREEN OF DEATH YOUR COMPUTER?\nTHIS MIGHT CAUSE CORRUPTION OR OTHER PROBLEMS (Y/N): ")
         if bro_cooked.lower().startswith("n"):
@@ -204,20 +203,31 @@ while True:
         except: print("Error: Directory not found.")
     elif user_input.lower().startswith("upload "):
         file_path = user_input.split(' ', 1)[1].strip()
+        file_path = file_path.encode("ascii", "ignore").decode("ascii")
         local_path = os.path.join(current_dir, file_path)
+        
         if os.path.exists(local_path):
             loading = True; loading_msg = "uploading"; t = threading.Thread(target=loading_animation); t.start()
             try:
                 file_name = os.path.basename(local_path)
-                with open(local_path, "rb") as f: data = f.read()
+                
+                with open(local_path, "rb") as f: 
+                    binary_data = f.read()
+                
+                if not binary_data:
+                    raise ValueError("File is empty.")
+
                 try:
                     contents = repo.get_contents(f"assets/{file_name}")
-                    repo.update_file(contents.path, "Update", data, contents.sha)
-                except: repo.create_file(f"assets/{file_name}", "Add", data)
+                    repo.update_file(contents.path, f"update {file_name}", binary_data, contents.sha)
+                except: 
+                    repo.create_file(f"assets/{file_name}", f"add {file_name}", binary_data)
+                
                 loading = False; t.join()
                 blob_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}/blob/{BRANCH}/assets/{file_name}".replace(" ", "%20")
                 print(f"\nUploaded: {file_name}\nView on github: {blob_url}\nDirect Link: {blob_url}?raw=true")
-            except Exception as e: loading = False; t.join(); print(f"\nError: {e}")
+            except Exception as e: 
+                loading = False; t.join(); print(f"\nError: {e}")
         else:
             print("Error: File not found.")
     else:
