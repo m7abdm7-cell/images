@@ -8,6 +8,7 @@ import requests
 GITHUB_USER = "pawPatoes" # Your github username
 REPO_NAME = "images" # The repo name, if you forked this repo without changing the name don't change this
 BRANCH = "main" # Unless you made a new branch don't change this!
+# IGNORE THESE IF THE CREDENTIALS ARE CORRECT!
 # --- END OF YOUR CHANGES
 
 
