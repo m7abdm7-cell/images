@@ -5,9 +5,9 @@ import time
 import threading
 import requests
 # DONT CHANGE THESE UNLESS THE AUTO ACTION DIDNT WORK!
-
-
-
+GITHUB_USER = "pawPatoes"
+REPO_NAME = "images"
+BRANCH = "main"
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
 def install_and_import(package, import_name=None):
     if import_name is None: import_name = package
