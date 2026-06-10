@@ -5,9 +5,9 @@ import time
 import threading
 import requests
 # --- START OF YOUR CHANGES ---
-GITHUB_USER = "test" # Your github username
-REPO_NAME = "fah" # The repo name, if you forked this repo without changing the name don't change this
-BRANCH = "TEST" # Unless you made a new branch don't change this!
+GITHUB_USER = "pawPatoes" # Your github username
+REPO_NAME = "images" # The repo name, if you forked this repo without changing the name don't change this
+BRANCH = "main" # Unless you made a new branch don't change this!
 # --- END OF YOUR CHANGES
 
 
