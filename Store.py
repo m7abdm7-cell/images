@@ -4,11 +4,13 @@ import os
 import time
 import threading
 import requests
-# --- MAKE YOUR CHANGES ---
+# --- START OF YOUR CHANGES ---
 GITHUB_USER = "pawPatoes"
 REPO_NAME = "images"
 BRANCH = "main"
 # --- END OF YOUR CHANGES
+
+
 
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
 def install_and_import(package, import_name=None):
@@ -74,9 +76,37 @@ readline.parse_and_bind("set show-all-if-ambiguous on")
 # INITIALIZATION
 loading = True; loading_msg = "initializing"
 t_init = threading.Thread(target=loading_animation); t_init.start()
+
 token = os.getenv('GITHUB_PAT')
-if not token: loading = False; t_init.join(); print("\n--- AUTHENTICATION ERROR ---"); exit()
-auth = Auth.Token(token); g = Github(auth=auth); repo = g.get_user(GITHUB_USER).get_repo(REPO_NAME)
+if not token:
+    loading = False; t_init.join()
+    print("\n" + "!"*40)
+    print("ERROR: GITHUB_PAT environment variable not found!")
+    print("How to set your PAT:")
+    print("1. Create a Personal Access Token at: https://github.com/settings/tokens")
+    print("2. Ensure the token has 'repo' permissions.")
+    print("3. Add it to your System Environment Variables as 'GITHUB_PAT'.")
+    print("   On Windows: Search 'Edit the system environment variables' -> Environment Variables -> New.")
+    print("!"*40)
+    exit()
+
+try:
+    auth = Auth.Token(token)
+    g = Github(auth=auth)
+    repo = g.get_user(GITHUB_USER).get_repo(REPO_NAME)
+except Exception as e:
+    loading = False; t_init.join()
+    print("\n" + "!"*40)
+    print(f"ERROR: Authentication failed: {e}")
+    print("How to set your PAT:")
+    print("1. Create a Personal Access Token at: https://github.com/settings/tokens")
+    print("2. Ensure the token has 'repo' permissions.")
+    print("3. Copy it (You won't be able to see it again!)")
+    print("4. Add it to your System Environment Variables as 'GITHUB_PAT'.")
+    print("   On Windows: Search 'Edit the system environment variables' -> Environment Variables -> New.")
+    print("!"*40)
+    exit()
+
 loading = False; t_init.join()
 
 current_dir = os.getcwd()
@@ -97,7 +127,7 @@ while True:
     except EOFError: break
     if not user_input: continue
 
-    # VIEW command
+    # VIEW
     if user_input.lower() == "view":
         loading = True; loading_msg = "fetching and caching"; t = threading.Thread(target=loading_animation); t.start()
         try:
@@ -106,12 +136,19 @@ while True:
             loading = False; t.join()
             print("\nFiles in /assets (cached):")
             for name in remote_cache: print(f"- {name}")
-        except: loading = False; t.join(); print("\nAssets directory empty or not found.")
+        except: loading = False; t.join(); print("\nAssets directory empty/not found.")
         continue
 
-    # DOWNLOAD command
+    # DOWNLOAD
     if user_input.lower().startswith('download '):
-        target_file = user_input.split(' ', 1)[1].strip()
+        target_input = user_input.split(' ', 1)[1].strip()
+        target_file = next((f for f in remote_cache if f.lower() == target_input.lower()), None)
+        if not target_file:
+            for ext in ['.png', '.jpg', '.jpeg', '.gif', '.mp4']:
+                match = next((f for f in remote_cache if f.lower() == (target_input + ext).lower()), None)
+                if match: target_file = match; break
+        
+        if not target_file: print("File not found in cache. Run 'view'."); continue
         final_name = handle_duplicate(target_file)
         if final_name:
             loading = True; loading_msg = f"downloading {target_file}"; t = threading.Thread(target=loading_animation); t.start()
@@ -124,16 +161,14 @@ while True:
             finally: loading = False; t.join()
         continue
 
-    # DELETE command
+    # DELETE
     if user_input.lower().startswith('delete '):
         target_input = user_input.split(' ', 1)[1].strip()
         target_file = next((f for f in remote_cache if f.lower() == target_input.lower()), None)
-        if not target_file: print("File not found in cache. Run 'view' first."); continue
-        
+        if not target_file: print("File not found in cache."); continue
         loading = True; loading_msg = f"deleting {target_file}"; t = threading.Thread(target=loading_animation); t.start()
         try:
-            contents = repo.get_contents(f"assets/{target_file}")
-            repo.delete_file(contents.path, f"Delete {target_file}", contents.sha)
+            repo.delete_file(repo.get_contents(f"assets/{target_file}").path, f"Delete {target_file}", repo.get_contents(f"assets/{target_file}").sha)
             if target_file in remote_cache: remote_cache.remove(target_file)
             print(f"\nDeleted: {target_file}")
         except Exception as e: print(f"\nError: {e}")
@@ -144,10 +179,10 @@ while True:
     if user_input.lower() == "files":
         for item in os.listdir('.'): print(f"[{'DIR' if os.path.isdir(item) else 'FILE'}] {item}")
     elif user_input.lower().startswith("cd "):
-        new_path = user_input[3:].strip()
-        if new_path == "..": os.chdir("..")
-        elif os.path.isdir(new_path): os.chdir(new_path)
-        current_dir = os.getcwd()
+        try:
+            os.chdir(user_input[3:].strip())
+            current_dir = os.getcwd()
+        except: print("Error: Directory not found.")
     else:
         local_path = os.path.join(current_dir, user_input)
         if os.path.exists(local_path):
