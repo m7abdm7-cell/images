@@ -5,9 +5,7 @@ import time
 import threading
 import requests
 # DONT CHANGE THESE UNLESS THE AUTO ACTION DIDNT WORK!
- # Your github username
- # The repo name
- # Unless you made a new branch don't change this!
+
 
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
 def install_and_import(package, import_name=None):
