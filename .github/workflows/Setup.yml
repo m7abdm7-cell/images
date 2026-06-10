@@ -12,27 +12,35 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup and Configure
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FORK_USER: ${{ github.repository_owner }}
           FORK_REPO: ${{ github.event.repository.name }}
           FORK_BRANCH: ${{ github.event.repository.default_branch }}
         run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # 1. Handle Assets Cleanup
           if [ -d "assets" ]; then
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
             rm -rf assets/*
             touch assets/.gitkeep
-            git add assets/
-            git commit -m "Cleanup: clear assets/ on fork"
-            git push
           fi
+          
+          # 2. Update Store.py
           sed -i "8s|GITHUB_USER = \".*\"|GITHUB_USER = \"$FORK_USER\"|" Store.py
           sed -i "9s|REPO_NAME = \".*\"|REPO_NAME = \"$FORK_REPO\"|" Store.py
           sed -i "10s|BRANCH = \".*\"|BRANCH = \"$FORK_BRANCH\"|" Store.py
-
-          git add Store.py
-          git commit -m "Config: update Store.py for fork"
-          git push
+          
+          # 3. Check for changes and push
+          # 'git diff --exit-code' returns 1 if there are changes
+          if ! git diff --quiet; then
+            git add .
+            git commit -m "Automated setup: clear assets and update config for fork"
+            git push
+          else
+            echo "No changes detected, skipping commit."
+          fi
