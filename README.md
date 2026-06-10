@@ -10,4 +10,4 @@ I shall exploit github servers so filegarden doesn't have to suffer
 7. All images uploaded are public, if you make the repo private, the links will only work to those who have access to the repo
 8. Despite this being called images it works with any file
 9. Drop questions in the issues
-10. Enjoy :D
+10. Enjoy :D  
