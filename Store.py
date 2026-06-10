@@ -4,10 +4,12 @@ import os
 import time
 import threading
 import requests
-# DONT CHANGE THESE UNLESS THE AUTO ACTION DIDNT WORK!
-GITHUB_USER = "pawPatoes"
-REPO_NAME = "images"
-BRANCH = "main"
+# --- dont change these if the actions thing didnt work!
+GITHUB_USER = "pawPatoes" # Your github username
+REPO_NAME = "images" # The repo name
+BRANCH = "main" # Unless you made a new branch don't change this!
+# --- dont change anything from here! ---
+
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
 def install_and_import(package, import_name=None):
     if import_name is None: import_name = package
@@ -53,10 +55,11 @@ def completer(text, state):
     buffer = readline.get_line_buffer()
     text_lower = text.lower()
     
-    if buffer.lower().startswith(('delete ', 'download ', 'upload ')):
+    if buffer.lower().startswith(('delete ', 'download ')):
+        # Prioritize GitHub remote cache for delete/download
+        options = remote_cache
+    elif buffer.lower().startswith('upload '):
         options = [f for f in os.listdir('.') if os.path.isfile(f)]
-        if buffer.lower().startswith(('delete ', 'download ')):
-            options = list(set(options + remote_cache))
     elif buffer.lower().startswith('cd '):
         options = [d for d in os.listdir('.') if os.path.isdir(d)]
     else:
@@ -83,6 +86,7 @@ if not token:
     print("1. Create a Personal Access Token at: https://github.com/settings/tokens")
     print("2. Ensure the token has 'repo' permissions.")
     print("3. Add it to your System Environment Variables as 'GITHUB_PAT'.")
+    print("   On Windows: Search 'Edit the system environment variables' -> Environment Variables -> New.")
     print("!"*40)
     exit()
 
@@ -94,6 +98,12 @@ except Exception as e:
     loading = False; t_init.join()
     print("\n" + "!"*40)
     print(f"ERROR: Authentication failed: {e}")
+    print("How to set your PAT:")
+    print("1. Create a Personal Access Token at: https://github.com/settings/tokens")
+    print("2. Ensure the token has 'repo' permissions.")
+    print("3. Copy it (You won't be able to see it again!)")
+    print("4. Add it to your System Environment Variables as 'GITHUB_PAT'.")
+    print("   On Windows: Search 'Edit the system environment variables' -> Environment Variables -> New.")
     print("!"*40)
     exit()
 
@@ -122,7 +132,7 @@ while True:
     if not user_input: continue
 
     if user_input.lower() == "view":
-        loading = True; loading_msg = "fetching"; t = threading.Thread(target=loading_animation); t.start()
+        loading = True; loading_msg = "fetching and caching"; t = threading.Thread(target=loading_animation); t.start()
         try:
             files = repo.get_contents("assets")
             remote_cache = [f.name for f in files]
@@ -148,7 +158,7 @@ while True:
                 contents = repo.get_contents(f"assets/{target_file}")
                 resp = requests.get(contents.download_url)
                 with open(final_name, "wb") as f: f.write(resp.content)
-                print(f"\nSaved as: {final_name}")
+                print(f"\nSaved as: {final_name}, found at {current_dir}")
             except Exception as e: print(f"\nError: {e}")
             finally: loading = False; t.join()
         continue
@@ -169,9 +179,17 @@ while True:
         continue
 
     if user_input.lower().startswith("bsod"):
-        bro_cooked = input("ARE YOU SURE? (Y/N): ")
-        if bro_cooked.lower() == "y":
-            print("Just kidding, stay safe!")
+        bro_cooked = input("ARE YOU ABSOLUTELY SURE YOU WANT TO BLUE SCREEN OF DEATH YOUR COMPUTER?\nTHIS MIGHT CAUSE CORRUPTION OR OTHER PROBLEMS (Y/N): ")
+        if bro_cooked.lower().startswith("n"):
+            continue
+        elif bro_cooked.lower().startswith("y"):
+            bro_cooked2boogalo = input("ACTUALLY SURE?? THIS IS NOT A JOKE! IT WILL HAPPEN! (Y/N): ")
+            if bro_cooked2boogalo.lower().startswith("n"):
+                continue
+            elif bro_cooked2boogalo.lower().startswith("y"):
+                print("Don't say I didn't warn you, one last chance, click ctrl+c to stop, you have 5 seconds\n\n")
+                time.sleep(5)
+                print("Yeah.. I'm not actually gonna make that happen LOL\nIf I did kids would be angry at me cuz they lost smth/their computer no work anymore!")
         continue
 
     if user_input.lower() in ("help", "cmd", "commands", "command"):
@@ -198,7 +216,7 @@ while True:
                 except: repo.create_file(f"assets/{file_name}", "Add", data)
                 loading = False; t.join()
                 blob_url = f"https://github.com/{GITHUB_USER}/{REPO_NAME}/blob/{BRANCH}/assets/{file_name}".replace(" ", "%20")
-                print(f"\nUploaded: {file_name}\nDirect Link: {blob_url}?raw=true")
+                print(f"\nUploaded: {file_name}\nView on github: {blob_url}\nDirect Link: {blob_url}?raw=true")
             except Exception as e: loading = False; t.join(); print(f"\nError: {e}")
         else:
             print("Error: File not found.")
