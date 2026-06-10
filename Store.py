@@ -5,9 +5,9 @@ import time
 import threading
 import requests
 # --- dont change these if the actions thing didnt work!
-GITHUB_USER = "pawPatoes" # Your github username
-REPO_NAME = "images" # The repo name
-BRANCH = "main" # Unless you made a new branch don't change this!
+GITHUB_USER = "pawPatoes"
+REPO_NAME = "images"
+BRANCH = "main"
 # --- dont change anything from here! ---
 
 # --- AUTOMATIC DEPENDENCY INSTALLER ---
