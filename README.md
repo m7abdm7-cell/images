@@ -11,3 +11,5 @@ I shall exploit github servers so filegarden doesn't have to suffer
 8. Despite this being called images it works with any file
 9. Drop questions in the issues
 10. Enjoy :D  
+# WTF IS THE ASSETS FOLDER
+its where ***I*** and everyone who forks this stores their files
