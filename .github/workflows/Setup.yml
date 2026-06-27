@@ -1,7 +1,7 @@
 name: Setup Forked Repo
 
 on:
-  workflow_dispatch:
+  fork:
 
 jobs:
   setup:
