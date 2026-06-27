@@ -4,6 +4,7 @@ import os
 import time
 import threading
 import requests
+import webbrowser
 # --- only change these if the actions thing didnt work!
 GITHUB_USER = "pawPatoes"
 REPO_NAME = "images"
@@ -158,9 +159,22 @@ while True:
                 contents = repo.get_contents(f"assets/{target_file}")
                 resp = requests.get(contents.download_url)
                 with open(final_name, "wb") as f: f.write(resp.content)
-                print(f"\nSaved as: {final_name}, found at {current_dir}")
-            except Exception as e: print(f"\nError: {e}")
-            finally: loading = False; t.join()
+                loading = False; t.join()
+                done = False 
+                while done == False:
+                    print(f"\nSaved as: {final_name}, found at {current_dir}")
+                    open_file = input("Open file? (Y/N): ").lower().strip()
+                    if open_file.startswith('y'): 
+                        file_to_open = os.path.join( current_dir, final_name)
+                        webbrowser.open("file://" + file_to_open)
+                        done = True
+                    elif open_file.startswith('n'): 
+                        done = True
+                    else: 
+                        print("Your response wasn't Y nor N!")
+            except Exception as e: 
+                loading = False; t.join()
+                print(f"\nError: {e}")
         continue
 
     if user_input.lower().startswith('delete '):
