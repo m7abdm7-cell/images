@@ -23,6 +23,11 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
+          # Explicitly set the remote URL to the current repository (the fork)
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git fetch origin
+          git checkout ${{ github.event.repository.default_branch }}
+
           sed -i '8,10d' Store.py
           sed -i "7aGITHUB_USER = \"$FORK_USER\"\nREPO_NAME = \"$FORK_REPO\"\nBRANCH = \"$FORK_BRANCH\"" Store.py
           
@@ -35,4 +40,4 @@ jobs:
           
           git add .
           git commit -m "Automated setup: refresh config and clean assets" || echo "No changes to commit"
-          git push
+          git push origin ${{ github.event.repository.default_branch }}
