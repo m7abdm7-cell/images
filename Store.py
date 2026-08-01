@@ -5,9 +5,9 @@ import time
 import threading
 import requests
 import webbrowser
-# --- only change these if the actions thing didnt work!
 GITHUB_USER = "pawPatoes"
 REPO_NAME = "images"
+BRANCH = "main"
 BRANCH = "main"
 # --- dont change anything from here! ---
 
