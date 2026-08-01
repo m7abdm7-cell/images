@@ -5,9 +5,8 @@ import time
 import threading
 import requests
 import webbrowser
-GITHUB_USER = "pawPatoes"
+GITHUB_USER = "m7abdm7-cell"
 REPO_NAME = "images"
-BRANCH = "main"
 BRANCH = "main"
 # --- dont change anything from here! ---
 
